@@ -1,0 +1,54 @@
+### Variables
+@baseUrl = http://localhost:3000
+
+@contentType = application/json
+
+
+
+###Get All Tasks
+GET {{baseUrl}}/tasks
+
+###Get Task by ID
+GET {{baseUrl}}/tasks/f14d0054-6bb9-4b3e-8420-4be531294d16
+
+
+
+###Create New Task
+# @name createTask
+POST {{baseUrl}}/tasks
+Content-Type: {{contentType}}
+
+{
+    "title": "New Task 2",
+    "description": "This is a new task 2",
+    "status": "OPEN"
+}
+ 
+
+
+### Set the task id
+@taskId = {{ createTask.response.body.id }}
+
+
+
+###Update Task Status
+PATCH {{baseUrl}}/tasks/{{taskId}}/status
+Content-Type: {{contentType}}
+
+{
+    "status": "DONE"
+}
+
+
+###Update Task
+PATCH {{baseUrl}}/tasks/{{taskId}}
+Content-Type: {{contentType}}
+
+{
+    "status": "DONE"
+}
+
+
+###Delete Task
+DELETE {{baseUrl}}/tasks/{{taskId}}
+Content-Type: {{contentType}}
