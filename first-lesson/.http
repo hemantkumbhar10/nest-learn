@@ -21,7 +21,7 @@ Content-Type: {{contentType}}
 {
     "title": "New Task 2",
     "description": "This is a new task 2",
-    "status": "OPEN"
+    "status": "DONE"
 }
  
 
@@ -32,12 +32,12 @@ Content-Type: {{contentType}}
 
 
 ###Update Task Status
-PATCH {{baseUrl}}/tasks/{{taskId}}/status
-Content-Type: {{contentType}}
+# PATCH {{baseUrl}}/tasks/{{taskId}}/status
+# Content-Type: {{contentType}}
 
-{
-    "status": "DONE"
-}
+# {
+#     "status": "DONE"
+# }
 
 
 ###Update Task
@@ -45,7 +45,7 @@ PATCH {{baseUrl}}/tasks/{{taskId}}
 Content-Type: {{contentType}}
 
 {
-    "status": "DONE"
+    "status": "IN_PROGRESS"
 }
 
 

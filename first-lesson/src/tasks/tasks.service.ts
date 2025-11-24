@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ITask, TaskStatus } from './task.model';
 import { CreateTaskDto } from './create-task.dto';
 import { randomUUID } from 'crypto';
-import { stat } from 'fs';
 import { WrongTaskStatusTransitionException } from './execeptions/wrong-task-status-transition-exception';
 import { UpdateTaskDto } from './update-task.dto';
 
@@ -32,8 +31,11 @@ export class TasksService {
   }
 
   updateTask(task: ITask, updateTaskDto: UpdateTaskDto): ITask {
-    if(updateTaskDto.status && !this.isValidStatusTransition(task.status, updateTaskDto.status)) {
-        throw new WrongTaskStatusTransitionException();
+    if (
+      updateTaskDto.status &&
+      !this.isValidStatusTransition(task.status, updateTaskDto.status)
+    ) {
+      throw new WrongTaskStatusTransitionException();
     }
 
     Object.assign(task, updateTaskDto);

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -14,11 +15,12 @@ import { TasksService } from './tasks.service';
 import { ITask } from './task.model';
 import { CreateTaskDto } from './create-task.dto';
 import { FindOneParams } from './find-one.params';
-import { UpdateTaskStatusDto } from './update-task-status.dto';
+import { WrongTaskStatusTransitionException } from './execeptions/wrong-task-status-transition-exception';
+import { UpdateTaskDto } from './update-task.dto';
 
 @Controller('tasks')
 export class TasksController {
-  constructor(private readonly tasksService: TasksService) {}
+  constructor(private readonly tasksService: TasksService) { }
 
   @Get()
   public findAll(): ITask[] {
@@ -35,15 +37,15 @@ export class TasksController {
     return this.tasksService.create(createTaskDto);
   }
 
-//   @Patch('/:id/status')
-//   public updateStatus(
-//     @Param() params: FindOneParams,
-//     @Body() updateTaskStatusDto: UpdateTaskStatusDto,
-//   ): ITask | undefined {
-//     const task = this.findOneOrFail(params.id);
-//     task.status = updateTaskStatusDto.status;
-//     return task;
-//   }
+  //   @Patch('/:id/status')
+  //   public updateStatus(
+  //     @Param() params: FindOneParams,
+  //     @Body() updateTaskStatusDto: UpdateTaskStatusDto,
+  //   ): ITask | undefined {
+  //     const task = this.findOneOrFail(params.id);
+  //     task.status = updateTaskStatusDto.status;
+  //     return task;
+  //   }
 
   @Delete('/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -53,11 +55,21 @@ export class TasksController {
   }
 
   @Patch('/:id')
-  public updateTask(@Param() params: FindOneParams, @Body() updateTaskDto: CreateTaskDto): ITask | undefined {
-      const task = this.findOneOrFail(params.id);
+  public updateTask(
+    @Param() params: FindOneParams,
+    @Body() updateTaskDto: UpdateTaskDto,
+  ): ITask | undefined {
+    const task = this.findOneOrFail(params.id);
 
-      const updatedTask = this.tasksService.updateTask(task, updateTaskDto);
-      return updatedTask;
+    try {
+      return this.tasksService.updateTask(task, updateTaskDto);
+    } catch (error) {
+      if (error instanceof WrongTaskStatusTransitionException) {
+        throw new BadRequestException(error.message);
+      }
+
+      throw new Error('asss');
+    }
   }
 
   private findOneOrFail(id: string): ITask {
